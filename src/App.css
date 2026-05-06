@@ -368,6 +368,16 @@
   gap: 0.9rem;
 }
 
+.management-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.management-form-span {
+  grid-column: 1 / -1;
+}
+
 .table-search-control {
   display: flex;
   align-items: center;
@@ -457,6 +467,34 @@
   background: linear-gradient(180deg, #ffffff 0%, #fafafb 100%);
 }
 
+.editor-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: 999px;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.room-image-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.room-image-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f5f5f5;
+}
+
 .settings-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -541,6 +579,7 @@
 
   .toolbar-grid,
   .filter-grid-wide,
+  .management-form-grid,
   .settings-form-grid {
     grid-template-columns: 1fr;
   }

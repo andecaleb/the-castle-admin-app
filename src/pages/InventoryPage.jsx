@@ -158,8 +158,8 @@ function InventoryPage() {
               >
                 <option value="all">All room types</option>
                 {filtersData.roomTypes.map((roomType) => (
-                  <option key={roomType} value={roomType}>
-                    {roomType}
+                  <option key={roomType.id || roomType.slug} value={roomType.id || roomType.slug}>
+                    {roomType.name || roomType.slug}
                   </option>
                 ))}
               </select>
@@ -194,7 +194,7 @@ function InventoryPage() {
                         <div>{room.hotelName}</div>
                         <small className="text-muted-soft">{room.hotelCity}</small>
                       </td>
-                      <td className="text-capitalize">{room.type}</td>
+                      <td>{room.roomTypeName}</td>
                       <td className="fw-bold">{formatCurrency(room.basePrice, room.currency)}</td>
                       <td>
                         <div>{room.availableToday} available</div>

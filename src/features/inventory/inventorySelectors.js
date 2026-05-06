@@ -21,8 +21,9 @@ export const selectVisibleInventory = createSelector(
 
     return items.filter((room) => {
       const matchesHotel = hotelId === 'all' ? true : String(room.hotelId) === String(hotelId)
-      const matchesRoomType = roomType === 'all' ? true : room.type === roomType
-      const haystack = [room.roomName, room.hotelName, room.hotelCity, room.type]
+      const matchesRoomType =
+        roomType === 'all' ? true : String(room.roomTypeId) === String(roomType)
+      const haystack = [room.roomName, room.hotelName, room.hotelCity, room.roomTypeName, room.type]
         .join(' ')
         .toLowerCase()
       const matchesSearch =

@@ -2,6 +2,7 @@ const STATUS_CLASS_MAP = {
   confirmed: 'is-confirmed',
   pending: 'is-pending',
   cancelled: 'is-cancelled',
+  active: 'is-active',
   checked_in: 'is-active',
   paid: 'is-confirmed',
   completed: 'is-confirmed',
