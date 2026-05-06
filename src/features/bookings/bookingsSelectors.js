@@ -11,12 +11,14 @@ export const selectBookingSummary = createSelector([selectBookingsItems], (items
   const totalRevenue = items.reduce((sum, booking) => sum + Number(booking.total || 0), 0)
   const confirmed = items.filter((booking) => booking.status === 'Confirmed').length
   const pending = items.filter((booking) => booking.status === 'Pending').length
+  const currency = items[0]?.currency || 'NGN'
 
   return {
     total: items.length,
     confirmed,
     pending,
     totalRevenue,
+    currency,
   }
 })
 

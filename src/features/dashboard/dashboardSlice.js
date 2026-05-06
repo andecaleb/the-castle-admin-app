@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { dashboardService } from '../../data/services/dashboard.service'
+import { logout, sessionExpired } from '../auth/authSlice'
 
 const initialState = {
   hero: null,
@@ -20,6 +21,9 @@ export const fetchDashboardOverview = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message || 'Unable to load dashboard overview.')
     }
+  },
+  {
+    condition: (_, { getState }) => getState().dashboard.status !== 'loading',
   },
 )
 
@@ -46,6 +50,8 @@ const dashboardSlice = createSlice({
         state.status = 'failed'
         state.error = action.payload || 'Unable to load dashboard overview.'
       })
+      .addCase(logout.fulfilled, () => initialState)
+      .addCase(sessionExpired, () => initialState)
   },
 })
 

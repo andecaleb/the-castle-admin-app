@@ -2,12 +2,18 @@ import { apiNetwork, API_ROUTES, resolveApiRequest } from '../api'
 import { dashboardOverviewMock } from '../mocks/dashboard.mock'
 
 function mapDashboardResponse(payload) {
+  const data = payload?.data || payload || {}
+
   return {
-    hero: payload?.hero || dashboardOverviewMock.hero,
-    metrics: payload?.metrics || dashboardOverviewMock.metrics,
-    revenueSeries: payload?.revenueSeries || dashboardOverviewMock.revenueSeries,
-    tasks: payload?.tasks || dashboardOverviewMock.tasks,
-    recentBookings: payload?.recentBookings || dashboardOverviewMock.recentBookings,
+    hero: data.hero || dashboardOverviewMock.hero,
+    metrics: Array.isArray(data.metrics) ? data.metrics : dashboardOverviewMock.metrics,
+    revenueSeries: Array.isArray(data.revenueSeries)
+      ? data.revenueSeries
+      : dashboardOverviewMock.revenueSeries,
+    tasks: Array.isArray(data.tasks) ? data.tasks : dashboardOverviewMock.tasks,
+    recentBookings: Array.isArray(data.recentBookings)
+      ? data.recentBookings
+      : dashboardOverviewMock.recentBookings,
   }
 }
 

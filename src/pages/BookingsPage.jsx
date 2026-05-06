@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect } from 'react'
-import { CalendarRange, Download, RefreshCw, Search } from 'lucide-react'
+import { CalendarRange, LayoutDashboard, RefreshCw, Search } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import ErrorPanel from '../components/common/ErrorPanel'
 import LoadingPanel from '../components/common/LoadingPanel'
@@ -9,6 +10,7 @@ import {
   selectBookingSummary,
   selectBookingsError,
   selectBookingsFilters,
+  selectBookingsState,
   selectBookingsSource,
   selectBookingsStatus,
   selectVisibleBookings,
@@ -23,10 +25,12 @@ import { formatCurrency, formatDateRange } from '../utils/formatters'
 
 function BookingsPage() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const filters = useAppSelector(selectBookingsFilters)
   const bookingStatus = useAppSelector(selectBookingsStatus)
   const error = useAppSelector(selectBookingsError)
   const source = useAppSelector(selectBookingsSource)
+  const { pagination } = useAppSelector(selectBookingsState)
   const summary = useAppSelector(selectBookingSummary)
   const statusOptions = useAppSelector(selectBookingStatuses)
   const deferredSearch = useDeferredValue(filters.searchTerm)
@@ -79,7 +83,9 @@ function BookingsPage() {
           <div className="summary-card card h-100">
             <div className="card-body">
               <p className="summary-label">Booked revenue</p>
-              <h2 className="summary-value">{formatCurrency(summary.totalRevenue)}</h2>
+              <h2 className="summary-value">
+                {formatCurrency(summary.totalRevenue, summary.currency)}
+              </h2>
               <p className="summary-subtext">
                 Source: {source === 'mock' ? 'local fallback data' : 'connected API'}
               </p>
@@ -106,11 +112,24 @@ function BookingsPage() {
                   <RefreshCw size={16} />
                   <span className="ms-2">Refresh</span>
                 </button>
-                <button className="btn btn-gold rounded-pill px-3" type="button">
-                  <Download size={16} />
-                  <span className="ms-2">Export</span>
+                <button
+                  className="btn btn-gold rounded-pill px-3"
+                  onClick={() => navigate('/')}
+                  type="button"
+                >
+                  <LayoutDashboard size={16} />
+                  <span className="ms-2">Back to dashboard</span>
                 </button>
               </div>
+            </div>
+
+            <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+              <small className="text-muted-soft">
+                {pagination?.total || bookings.length} booking records loaded for this view.
+              </small>
+              <small className="text-muted-soft">
+                {summary.pending} pending • {summary.confirmed} confirmed
+              </small>
             </div>
 
             <div className="toolbar-grid">
@@ -180,7 +199,9 @@ function BookingsPage() {
                           {booking.service} | {booking.guests} guests
                         </small>
                       </td>
-                      <td className="fw-bold">{formatCurrency(booking.total)}</td>
+                      <td className="fw-bold">
+                        {formatCurrency(booking.total, booking.currency)}
+                      </td>
                       <td>
                         <StatusBadge value={booking.paymentStatus} />
                       </td>

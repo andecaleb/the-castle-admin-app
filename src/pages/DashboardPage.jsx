@@ -5,6 +5,7 @@ import {
   UsersRound,
   WalletCards,
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import ErrorPanel from '../components/common/ErrorPanel'
 import LoadingPanel from '../components/common/LoadingPanel'
@@ -16,6 +17,7 @@ import {
   selectDashboardStatus,
 } from '../features/dashboard/dashboardSelectors'
 import { fetchDashboardOverview } from '../features/dashboard/dashboardSlice'
+import { formatCurrency } from '../utils/formatters'
 
 const METRIC_ICON_MAP = {
   wallet: WalletCards,
@@ -26,6 +28,7 @@ const METRIC_ICON_MAP = {
 
 function DashboardPage() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const { hero, metrics, revenueSeries, tasks, recentBookings } =
     useAppSelector(selectDashboardState)
   const status = useAppSelector(selectDashboardStatus)
@@ -61,11 +64,19 @@ function DashboardPage() {
               <h2 className="display-6 fw-bold mb-3">{hero?.title}</h2>
               <p className="text-white-50 mb-4 max-w-2xl">{hero?.description}</p>
               <div className="d-flex flex-wrap gap-2">
-                <button className="btn btn-gold rounded-pill px-4" type="button">
-                  New booking
+                <button
+                  className="btn btn-gold rounded-pill px-4"
+                  onClick={() => navigate('/bookings')}
+                  type="button"
+                >
+                  Review bookings
                 </button>
-                <button className="btn btn-outline-light rounded-pill px-4" type="button">
-                  Export report
+                <button
+                  className="btn btn-outline-light rounded-pill px-4"
+                  onClick={() => dispatch(fetchDashboardOverview())}
+                  type="button"
+                >
+                  Refresh data
                 </button>
               </div>
             </div>
@@ -127,7 +138,11 @@ function DashboardPage() {
                     </span>
                   </div>
                   <p className="text-muted-soft mb-1 fw-semibold">{metric.label}</p>
-                  <h3 className="mb-0 fw-bold">{metric.displayValue}</h3>
+                  <h3 className="mb-0 fw-bold">
+                    {metric.id === 'revenue'
+                      ? formatCurrency(metric.value, 'NGN')
+                      : metric.displayValue}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -154,17 +169,29 @@ function DashboardPage() {
                 </div>
               </div>
 
-              <div className="chart-bar d-flex align-items-end gap-3">
-                {revenueSeries.map((entry) => (
-                  <div className="d-flex flex-column justify-content-end gap-2 w-100" key={entry.day}>
+              {revenueSeries.length > 0 ? (
+                <div className="chart-bar d-flex align-items-end gap-3">
+                  {revenueSeries.map((entry) => (
                     <div
-                      className={`bar ${entry.muted ? 'muted' : ''}`}
-                      style={{ height: `${entry.value}%` }}
-                    />
-                    <span className="chart-label">{entry.day}</span>
-                  </div>
-                ))}
-              </div>
+                      className="d-flex flex-column justify-content-end gap-2 w-100"
+                      key={entry.day}
+                    >
+                      <div
+                        className={`bar ${entry.muted ? 'muted' : ''}`}
+                        style={{ height: `${entry.value}%` }}
+                      />
+                      <span className="chart-label">{entry.day}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state empty-state-compact">
+                  <p className="mb-1 fw-bold">No revenue trend yet</p>
+                  <p className="mb-0 text-muted-soft">
+                    Fresh payment activity will appear here once bookings settle.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -211,38 +238,51 @@ function DashboardPage() {
                   <p className="mb-1 text-muted-soft fw-semibold">Bookings</p>
                   <h2 className="h4 mb-0 fw-bold">Recent activity</h2>
                 </div>
-                <button className="btn btn-gold rounded-pill px-4" type="button">
+                <button
+                  className="btn btn-gold rounded-pill px-4"
+                  onClick={() => navigate('/bookings')}
+                  type="button"
+                >
                   View all
                 </button>
               </div>
 
-              <div className="table-responsive">
-                <table className="table booking-table align-middle">
-                  <thead>
-                    <tr>
-                      <th>Customer</th>
-                      <th>Service</th>
-                      <th>Value</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentBookings.map((booking) => (
-                      <tr key={booking.id}>
-                        <td>
-                          <div className="fw-bold">{booking.customer}</div>
-                          <small className="text-muted-soft">{booking.subtext}</small>
-                        </td>
-                        <td>{booking.service}</td>
-                        <td className="fw-bold">{booking.value}</td>
-                        <td>
-                          <StatusBadge value={booking.status} />
-                        </td>
+              {recentBookings.length > 0 ? (
+                <div className="table-responsive">
+                  <table className="table booking-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Value</th>
+                        <th>Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {recentBookings.map((booking) => (
+                        <tr key={booking.id}>
+                          <td>
+                            <div className="fw-bold">{booking.customer}</div>
+                            <small className="text-muted-soft">{booking.subtext}</small>
+                          </td>
+                          <td>{booking.service}</td>
+                          <td className="fw-bold">{booking.value}</td>
+                          <td>
+                            <StatusBadge value={booking.status} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="empty-state empty-state-compact">
+                  <p className="mb-1 fw-bold">No recent bookings yet</p>
+                  <p className="mb-0 text-muted-soft">
+                    Recent confirmations and pending stays will show up here.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

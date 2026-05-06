@@ -4,7 +4,10 @@ const STATUS_CLASS_MAP = {
   cancelled: 'is-cancelled',
   checked_in: 'is-active',
   paid: 'is-confirmed',
+  completed: 'is-confirmed',
   partial: 'is-pending',
+  failed: 'is-cancelled',
+  refunded: 'is-neutral',
 }
 
 function StatusBadge({ value }) {

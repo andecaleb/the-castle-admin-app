@@ -4,6 +4,7 @@ import { normalizeApiError } from './normalizeApiError'
 class ApiNetwork {
   constructor(config) {
     this.authTokenProvider = null
+    this.unauthorizedHandler = null
     this.client = axios.create({
       baseURL: config.baseURL,
       timeout: config.timeout,
@@ -21,6 +22,10 @@ class ApiNetwork {
     this.authTokenProvider = provider
   }
 
+  setUnauthorizedHandler(handler) {
+    this.unauthorizedHandler = handler
+  }
+
   setupInterceptors() {
     this.client.interceptors.request.use((requestConfig) => {
       const token = this.authTokenProvider?.()
@@ -34,7 +39,15 @@ class ApiNetwork {
 
     this.client.interceptors.response.use(
       (response) => response,
-      (error) => Promise.reject(normalizeApiError(error)),
+      (error) => {
+        const normalizedError = normalizeApiError(error)
+
+        if (normalizedError.status === 401) {
+          this.unauthorizedHandler?.(normalizedError)
+        }
+
+        return Promise.reject(normalizedError)
+      },
     )
   }
 

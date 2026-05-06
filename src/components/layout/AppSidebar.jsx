@@ -1,8 +1,11 @@
 import { NavLink } from 'react-router-dom'
+import { useAppSelector } from '../../app/hooks'
 import { BRAND_ICON, NAV_ITEMS } from '../../config/navigation'
+import { selectAuthUser } from '../../features/auth/authSelectors'
 
 function AppSidebar() {
   const BrandIcon = BRAND_ICON
+  const user = useAppSelector(selectAuthUser)
 
   return (
     <aside className="sidebar p-4 d-flex flex-column gap-4">
@@ -48,9 +51,9 @@ function AppSidebar() {
       </nav>
 
       <div className="mt-auto rounded-4 p-3 bg-white bg-opacity-10">
-        <p className="mb-1 fw-bold">Gold tier</p>
+        <p className="mb-1 fw-bold">{user?.name || 'Castle Admin'}</p>
         <small className="text-white-50">
-          24 properties synced across the network.
+          {user?.email || user?.phone || 'Live admin session'}
         </small>
       </div>
     </aside>

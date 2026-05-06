@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { bookingsService } from '../../data/services/bookings.service'
+import { logout, sessionExpired } from '../auth/authSlice'
 
 const initialState = {
   items: [],
@@ -22,6 +23,9 @@ export const fetchBookings = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message || 'Unable to load bookings.')
     }
+  },
+  {
+    condition: (_, { getState }) => getState().bookings.status !== 'loading',
   },
 )
 
@@ -55,6 +59,8 @@ const bookingsSlice = createSlice({
         state.status = 'failed'
         state.error = action.payload || 'Unable to load bookings.'
       })
+      .addCase(logout.fulfilled, () => initialState)
+      .addCase(sessionExpired, () => initialState)
   },
 })
 
