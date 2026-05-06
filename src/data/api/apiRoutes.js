@@ -3,6 +3,9 @@ export const API_ROUTES = {
     login: '/auth/login',
     logout: '/auth/logout',
   },
+  customers: {
+    collection: '/customers',
+  },
   profile: {
     show: '/profile',
     update: '/profile',
@@ -12,5 +15,15 @@ export const API_ROUTES = {
   },
   bookings: {
     collection: '/bookings',
+  },
+  inventory: {
+    overview: '/inventory',
+  },
+  reports: {
+    overview: '/reports/overview',
+  },
+  settings: {
+    show: '/settings',
+    update: '/settings',
   },
 }

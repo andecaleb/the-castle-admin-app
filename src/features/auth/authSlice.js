@@ -40,7 +40,8 @@ export const initializeAuth = createAsyncThunk(
     }
   },
   {
-    condition: (_, { getState }) => getState().auth.status === 'idle',
+    condition: (forceRefresh = false, { getState }) =>
+      forceRefresh === true || getState().auth.status === 'idle',
   },
 )
 

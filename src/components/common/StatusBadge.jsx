@@ -8,6 +8,11 @@ const STATUS_CLASS_MAP = {
   partial: 'is-pending',
   failed: 'is-cancelled',
   refunded: 'is-neutral',
+  available: 'is-confirmed',
+  low: 'is-pending',
+  sold_out: 'is-cancelled',
+  inactive: 'is-neutral',
+  closed: 'is-neutral',
 }
 
 function StatusBadge({ value }) {
